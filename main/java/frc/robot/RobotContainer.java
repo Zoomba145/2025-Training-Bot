@@ -19,15 +19,23 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+  private final DriveSubsystem driveSubsystem = new DriveSubsystem();
+  private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+  private final ManipulatorSubsystem manipulatorSubsystem = new ManipulatorSubsystem();
   // The robot's subsystems and commands are defined here...
   // TODO: initialize subsystems (driveSubsystem, elevatorSubsystem, manipulatorSubsystem)
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
+  private final CommandXboxController driver = new CommandXboxController(0);
+  private final CommandXboxController Operator = new CommandXboxController(1);
   // TODO: initialize controller (CommandXboxController) 
+  private final SendableChooser<Command> m_autoChooser = new SendableChooser<Command>;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
+    initializeAutoChooser();
+    driverSubsystem.setDefaultCommand(new RunCommand(() -> driverSubsystem.driverArcade(-m_driverController.getLeftY(), driverController.getRightX()), driveSubsystem));
     configureBindings();
   }
 
@@ -42,9 +50,12 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
+    OperatorController.leftBumper().whileTrue(new ElevatorSetPoint(elevatorSubsystem, 0.7));
+    OperatorController.rightBumper().whileTrue(new ElevatorSetPoint(elevatorSubsystem, -0.7));
+    OperatorController.a().onTrue(new ManipulatorOutake(manipulatorSubsystem, 0.2).withTimeout(11));
+    OperatorController.b().onTrue(new ManipulatorOutake(manipulatorSubsystem, -0.2).withTimeout(11));
+    new Trigger(m_exampleSubsystem::exampleCondition ElevatorSubsystem)
         .onTrue(new ExampleCommand(m_exampleSubsystem));
-
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
